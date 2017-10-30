@@ -177,6 +177,18 @@ public class SPInitLogoutRequestProcessor implements SPInitSSOLogoutRequestProce
             reqValidationResponseDTO.setLogoutResponse(SAMLSSOUtil.encode(SAMLSSOUtil.marshall(logoutResponse)));
             reqValidationResponseDTO.setValid(true);
 
+            SAMLSSOServiceProviderDO value = sessionsList.get(issuer);
+
+            reqValidationResponseDTO.setIssuer(value.getIssuer());
+            reqValidationResponseDTO.setDoSignResponse(value.isDoSignResponse());
+            reqValidationResponseDTO.setSigningAlgorithmUri(value.getSigningAlgorithmUri());
+            reqValidationResponseDTO.setDigestAlgorithmUri(value.getDigestAlgorithmUri());
+            if (StringUtils.isNotBlank(value.getSloResponseURL())) {
+                reqValidationResponseDTO.setAssertionConsumerURL(value.getSloResponseURL());
+            } else {
+                reqValidationResponseDTO.setAssertionConsumerURL(value.getAssertionConsumerUrl());
+            }
+
             return reqValidationResponseDTO;
         } catch (UserStoreException | IdentityException | IOException e) {
             throw IdentityException.error("Error Processing the Logout Request", e);
