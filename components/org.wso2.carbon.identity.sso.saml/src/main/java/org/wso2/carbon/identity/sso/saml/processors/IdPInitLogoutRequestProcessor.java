@@ -109,23 +109,6 @@ public class IdPInitLogoutRequestProcessor implements IdpInitSSOLogoutRequestPro
                 validationResponseDTO.setIssuer(logoutReqIssuer.getIssuer());
                 SAMLSSOUtil.setTenantDomainInThreadLocal(logoutReqIssuer.getTenantDomain());
             }
-
-            Map<String, String> rpSessionsList = sessionInfoData.getRPSessionsList();
-            List<SingleLogoutRequestDTO> singleLogoutReqDTOs = new ArrayList<>();
-
-            for (Map.Entry<String, SAMLSSOServiceProviderDO> entry : sessionsList.entrySet()) {
-                String key = entry.getKey();
-                SAMLSSOServiceProviderDO value = entry.getValue();
-                if (value.isDoSingleLogout()) {
-                    SingleLogoutRequestDTO logoutReqDTO = SAMLSSOUtil.createLogoutRequestDTO(value,
-                            sessionInfoData.getSubject(key), sessionIndex, rpSessionsList.get(key),
-                            value.getCertAlias(), value.getTenantDomain());
-                    singleLogoutReqDTOs.add(logoutReqDTO);
-                }
-            }
-
-            validationResponseDTO.setLogoutRespDTO(singleLogoutReqDTOs.toArray(
-                    new SingleLogoutRequestDTO[singleLogoutReqDTOs.size()]));
             validationResponseDTO.setValid(true);
 
         } catch (UserStoreException | IdentityException e) {
